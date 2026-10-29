@@ -1,0 +1,27 @@
+# Внешняя проверка доступности akt.veridok.ru (слово Владельца 29.10.2026: «1 а»).
+# Успех — сигнал на hc-ping.com; сбой — сигнал /fail с причиной. Молчание (GitHub не запустил) Healthchecks
+# сам считает тревогой: Period 5 мин, Grace 15 мин.
+name: uptime
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Проверить сайт и отправить сигнал
+        env:
+          HC_PING_URL: ${{ secrets.HC_PING_URL }}
+        run: bash check.sh
